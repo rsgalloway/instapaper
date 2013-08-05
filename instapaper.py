@@ -40,6 +40,11 @@ import oauth2 as oauth
 from lxml import etree
 from urllib import urlencode
 
+from HTMLParser import HTMLParser
+from re import sub
+from sys import stderr
+from traceback import print_exc
+
 __author__ = "Ryan Galloway <ryan@rsgalloway.com>"
 
 __doc__ = """
@@ -54,14 +59,51 @@ _ACCESS_TOKEN_ = "oauth/access_token"
 _BOOKMARKS_LIST_ = "bookmarks/list"
 _BOOKMARKS_TEXT_ = "bookmarks/get_text"
 
+class _DeHTMLParser(HTMLParser):
+    def __init__(self):
+        HTMLParser.__init__(self)
+        self.__text = []
+
+    def handle_data(self, data):
+        text = data.strip()
+        if len(text) > 0:
+            text = sub('[ \t\r\n]+', ' ', text)
+            self.__text.append(text + ' ')
+
+    def handle_starttag(self, tag, attrs):
+        if tag == 'p':
+            self.__text.append('\n\n')
+        elif tag == 'br':
+            self.__text.append('\n')
+
+    def handle_startendtag(self, tag, attrs):
+        if tag == 'br':
+            self.__text.append('\n\n')
+
+    def text(self):
+        return ''.join(self.__text).strip()
+
+
+def dehtml(text):
+    try:
+        parser = _DeHTMLParser()
+        parser.feed(text)
+        parser.close()
+        return parser.text()
+    except:
+        print_exc(file=stderr)
+        return text
+
 class Bookmark(object):
     def __init__(self, parent, params):
         self.parent = parent
         self.__text = None
+        self.__html = None
         self.__dict__.update(params)
 
-    def text(self):
-        if self.__text is None:
+    @property
+    def html(self):
+        if self.__html is None:
             response, html = self.parent.http.request(
                         "/".join([_BASE_, _API_VERSION_, _BOOKMARKS_TEXT_]),
                         method='POST',
@@ -69,8 +111,13 @@ class Bookmark(object):
                             'bookmark_id': self.bookmark_id, 
                             }))
             if response.get("status") == "200":
-                root = etree.HTML(html)
-                self.__text = root.xpath("//div[@id='story']/div/p/text()")
+                self.__html = html
+        return self.__html
+
+    @property
+    def text(self):
+        if self.__text is None:
+            self.__text = dehtml(self.html)
         return self.__text
 
     def star(self):
