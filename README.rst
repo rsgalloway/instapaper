@@ -37,6 +37,12 @@ Or the raw text: ::
     
     >>> marks[0].text
 
+Folders: ::
+
+    >>> folders = i.folders()
+    >>> for f in folders:
+    ...     print f.folder_id, f.title
+
 
 Playback
 --------
