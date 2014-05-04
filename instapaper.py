@@ -110,8 +110,8 @@ class Bookmark(object):
             response, html = self.parent.http.request(
                         "/".join([_BASE_, _API_VERSION_, _BOOKMARKS_TEXT_]),
                         method='POST',
-                        body=urlencode({ 
-                            'bookmark_id': self.bookmark_id, 
+                        body=urlencode({
+                            'bookmark_id': self.bookmark_id,
                             }))
             if response.get("status") == "200":
                 self.__html = html
@@ -136,8 +136,8 @@ class Bookmark(object):
         response, html = self.parent.http.request(
                     "/".join([_BASE_, _API_VERSION_, _BOOKMARKS_MOVE_]),
                     method='POST',
-                    body=urlencode({ 
-                        'bookmark_id': self.bookmark_id, 
+                    body=urlencode({
+                        'bookmark_id': self.bookmark_id,
                         'folder_id': folder_id
                         }))
         if response.get("status") == "200":
@@ -159,21 +159,21 @@ class Instapaper(object):
                     'x_auth_username': username,
                     'x_auth_password': password}))
         _oauth = dict(urlparse.parse_qsl(content))
-        self.token = oauth.Token(_oauth['oauth_token'], 
+        self.token = oauth.Token(_oauth['oauth_token'],
                                  _oauth['oauth_token_secret'])
         self.http = oauth.Client(self.consumer, self.token)
 
     def bookmarks(self, folder="unread", limit=10, have=""):
         """
-        folder_id: Optional. Possible values are unread (default), 
+        folder_id: Optional. Possible values are unread (default),
                    starred, archive, or a folder_id value.
         limit: Optional. A number between 1 and 500, default 25.
         """
         response, data = self.http.request(
                     "/".join([_BASE_, _API_VERSION_, _BOOKMARKS_LIST_]),
                     method='POST',
-                    body=urlencode({ 
-                        'folder_id': folder, 
+                    body=urlencode({
+                        'folder_id': folder,
                         'limit': limit,
                         'have': have}))
         marks = []
@@ -203,7 +203,7 @@ class Instapaper(object):
         response, data = self.http.request(
                     "/".join([_BASE_, _API_VERSION_, _FOLDERS_ADD_]),
                     method='POST',
-                    body=urlencode({ 
+                    body=urlencode({
                         'title': title}))
         if response.get("status") == "200":
             return True
