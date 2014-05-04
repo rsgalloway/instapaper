@@ -58,6 +58,7 @@ _API_VERSION_ = "api/1"
 _ACCESS_TOKEN_ = "oauth/access_token"
 _BOOKMARKS_LIST_ = "bookmarks/list"
 _BOOKMARKS_TEXT_ = "bookmarks/get_text"
+_BOOKMARKS_MOVE_ = "bookmarks/move"
 _FOLDERS_ADD_ = "folders/add"
 _FOLDERS_LIST_ = "folders/list"
 
@@ -130,6 +131,18 @@ class Bookmark(object):
 
     def save(self):
         raise NotImplementedError
+
+    def move(self, folder_id):
+        response, html = self.parent.http.request(
+                    "/".join([_BASE_, _API_VERSION_, _BOOKMARKS_MOVE_]),
+                    method='POST',
+                    body=urlencode({ 
+                        'bookmark_id': self.bookmark_id, 
+                        'folder_id': folder_id
+                        }))
+        if response.get("status") == "200":
+            return True
+        return False
 
 class Instapaper(object):
     def __init__(self, oauthkey, oauthsec):
