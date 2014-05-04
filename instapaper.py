@@ -159,7 +159,8 @@ class Instapaper(object):
                     method='POST',
                     body=urlencode({ 
                         'folder_id': folder, 
-                        'limit': limit}))
+                        'limit': limit,
+                        'have': have}))
         marks = []
         items = json.loads(data)
         for item in items:
