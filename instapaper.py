@@ -58,6 +58,7 @@ _API_VERSION_ = "api/1"
 _ACCESS_TOKEN_ = "oauth/access_token"
 _BOOKMARKS_LIST_ = "bookmarks/list"
 _BOOKMARKS_TEXT_ = "bookmarks/get_text"
+_FOLDERS_LIST_ = "folders/list"
 
 class _DeHTMLParser(HTMLParser):
     def __init__(self):
@@ -169,3 +170,14 @@ class Instapaper(object):
             elif item.get("type") == "bookmark":
                 marks.append(Bookmark(self, item))
         return marks
+
+    def folders(self):
+        response, data = self.http.request(
+                    "/".join([_BASE_, _API_VERSION_, _FOLDERS_LIST_]),
+                    method='POST',
+                    body=urlencode({}))
+        folders = []
+        items = json.loads(data)
+        for item in items:
+            folders.append(item)
+        return folders
