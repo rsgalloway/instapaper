@@ -25,8 +25,8 @@ Basic Usage
 Currently, only fetching existing bookmarks are supported.  ::
 
     >>> from instapaper import Instapaper as ipaper
-    >>> ipaper(key, secret)
-    >>> ipaper.login(login, pw)
+    >>> i = ipaper(key, secret)
+    >>> i.login(login, pw)
     >>> marks = i.bookmarks()
 
 Get the html: ::
@@ -45,7 +45,7 @@ Have a long commute home from work? Have your Instapaper bookmarks read back to 
 using "utter" (pip install utter). You can even have them read back to you in a
 differnet language, for example Italian: ::
 
-    <<< import utter
+    >>> import utter
     >>> for m in marks:
     ...     utter.play(m.text, target="it")
 
