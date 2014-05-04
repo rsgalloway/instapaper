@@ -37,6 +37,10 @@ Or the raw text: ::
     
     >>> marks[0].text
 
+Save to a folder: ::
+
+    >>> marks[0].move(folder_id=1234567)
+
 Folders: ::
 
     >>> folders = i.folders()
