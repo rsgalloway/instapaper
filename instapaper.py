@@ -148,7 +148,7 @@ class Instapaper(object):
                                  _oauth['oauth_token_secret'])
         self.http = oauth.Client(self.consumer, self.token)
 
-    def bookmarks(self, folder="unread", limit=10):
+    def bookmarks(self, folder="unread", limit=10, have=""):
         """
         folder_id: Optional. Possible values are unread (default), 
                    starred, archive, or a folder_id value.
