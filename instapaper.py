@@ -56,8 +56,12 @@ http://www.instapaper.com/api/full
 _BASE_ = "https://www.instapaper.com"
 _API_VERSION_ = "api/1"
 _ACCESS_TOKEN_ = "oauth/access_token"
+_ACCOUNT_ = "account/verify_credentials"
 _BOOKMARKS_LIST_ = "bookmarks/list"
 _BOOKMARKS_TEXT_ = "bookmarks/get_text"
+_BOOKMARKS_STAR_ = "bookmarks/star"
+_BOOKMARKS_UNSTAR_ = "bookmarks/unstar"
+_BOOKMARKS_DELETE_ = "bookmarks/delete"
 _BOOKMARKS_MOVE_ = "bookmarks/move"
 _FOLDERS_ADD_ = "folders/add"
 _FOLDERS_LIST_ = "folders/list"
@@ -103,6 +107,24 @@ class Bookmark(object):
         self.__text = None
         self.__html = None
         self.__dict__.update(params)
+        """
+        {'hash': '21iTZfCr', 
+        'description': u'', 
+        'parent': <instapaper.Instapaper object at 0x104055ad0>, 
+        'title': u'Let\u2019s Ignore Each Other Together', 
+        'url': 'https://medium.com/re-form/lets-ignore-each-other-together-d7cf46a8a8ad', 
+        '_Bookmark__html': None, 
+        'time': 1422657611, 
+        'progress_timestamp': 1422662236, 
+        'bookmark_id': 550386320, 
+        '_Bookmark__text': None, 
+        'progress': 0.0, 
+        'starred': '0', 
+        'type': 'bookmark', 
+        'private_source': u''}
+
+        """
+        self.starred = (self.starred == '1') # convert to boolean
 
     @property
     def html(self):
@@ -124,10 +146,39 @@ class Bookmark(object):
         return self.__text
 
     def star(self):
-        raise NotImplementedError
+        response, html = self.parent.http.request(
+                    "/".join([_BASE_, _API_VERSION_, _BOOKMARKS_STAR_]),
+                    method='POST',
+                    body=urlencode({
+                        'bookmark_id': self.bookmark_id,
+                        }))
+        if response.get("status") == "200":
+            self.starred = True
+            return True
+        return False
+
+    def unstar(self):
+        response, html = self.parent.http.request(
+                    "/".join([_BASE_, _API_VERSION_, _BOOKMARKS_UNSTAR_]),
+                    method='POST',
+                    body=urlencode({
+                        'bookmark_id': self.bookmark_id,
+                        }))
+        if response.get("status") == "200":
+            self.starred = False
+            return True
+        return False
 
     def delete(self):
-        raise NotImplementedError
+        response, html = self.parent.http.request(
+                    "/".join([_BASE_, _API_VERSION_, _BOOKMARKS_DELETE_]),
+                    method='POST',
+                    body=urlencode({
+                        'bookmark_id': self.bookmark_id,
+                        }))
+        if response.get("status") == "200":
+            return True
+        return False
 
     def save(self):
         raise NotImplementedError
@@ -162,6 +213,16 @@ class Instapaper(object):
         self.token = oauth.Token(_oauth['oauth_token'],
                                  _oauth['oauth_token_secret'])
         self.http = oauth.Client(self.consumer, self.token)
+
+    def user(self):
+        response, data = self.http.request(
+                    "/".join([_BASE_, _API_VERSION_, _ACCOUNT_]),
+                    method='POST',
+                    body=None)
+        user = json.loads(data)[0]
+        if user.get("type") == "error":
+                raise Exception(item.get("message"))
+        return user
 
     def bookmarks(self, folder="unread", limit=10, have=""):
         """
