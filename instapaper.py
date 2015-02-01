@@ -94,6 +94,10 @@ class _DeHTMLParser(HTMLParser):
 def dehtml(text):
     try:
         parser = _DeHTMLParser()
+        if text:
+            text = text.decode('UTF-8')
+        else:
+            return None
         parser.feed(text)
         parser.close()
         return parser.text()
