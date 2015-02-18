@@ -214,8 +214,13 @@ class Instapaper(object):
                     'x_auth_username': username,
                     'x_auth_password': password}))
         _oauth = dict(urlparse.parse_qsl(content))
-        self.token = oauth.Token(_oauth['oauth_token'],
-                                 _oauth['oauth_token_secret'])
+        self.login_with_token(_oauth['oauth_token'], _oauth['oauth_token_secret'])
+       
+    def login_with_token(self, oauth_token, oauth_token_secret):
+        """
+        When you want to access a user's data using their existing token
+        """
+        self.token = oauth.Token(oauth_token, oauth_token_secret)
         self.http = oauth.Client(self.consumer, self.token)
 
     def user(self):
@@ -249,7 +254,7 @@ class Instapaper(object):
             elif item.get("type") == "bookmark":
                 marks.append(Bookmark(self, item))
         return marks
-
+    
     def folders(self):
         response, data = self.http.request(
                     "/".join([_BASE_, _API_VERSION_, _FOLDERS_LIST_]),
