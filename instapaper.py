@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 # ---------------------------------------------------------------------------------------------
 # Copyright (c) 2013, Ryan Galloway (ryan@rsgalloway.com)
 #
@@ -35,7 +37,7 @@ import os
 import sys
 import urllib2
 import urlparse
-import simplejson as json
+import json  # simplejson as 
 import oauth2 as oauth
 from lxml import etree
 from urllib import urlencode
@@ -53,6 +55,8 @@ An unofficial Python wrapper to the full Instapaper API.
 http://www.instapaper.com/api/full
 """
 
+"""Updated by Floyd Hightower on Feb. 6, 2016."""
+
 _BASE_ = "https://www.instapaper.com"
 _API_VERSION_ = "api/1"
 _ACCESS_TOKEN_ = "oauth/access_token"
@@ -61,6 +65,7 @@ _BOOKMARKS_LIST_ = "bookmarks/list"
 _BOOKMARKS_TEXT_ = "bookmarks/get_text"
 _BOOKMARKS_STAR_ = "bookmarks/star"
 _BOOKMARKS_UNSTAR_ = "bookmarks/unstar"
+_BOOKMARKS_ADD_ = "bookmarks/add"
 _BOOKMARKS_DELETE_ = "bookmarks/delete"
 _BOOKMARKS_MOVE_ = "bookmarks/move"
 _FOLDERS_ADD_ = "folders/add"
@@ -125,10 +130,15 @@ class Bookmark(object):
         'progress': 0.0, 
         'starred': '0', 
         'type': 'bookmark', 
-        'private_source': u''}
-
+        'content': u'',
+        'private_source': u'',
+        # is_private_from_source is used for adding a bookmark
+        'is_private_from_source': u''}
         """
-        self.starred = (self.starred == '1') # convert to boolean
+        try:
+            self.starred = (self.starred == '1') # convert to boolean
+        except:
+            self.starred = False
 
     @property
     def html(self):
@@ -184,8 +194,54 @@ class Bookmark(object):
             return True
         return False
 
-    def save(self):
-        raise NotImplementedError
+    def save(self, folder_id=None):
+        # add appropriate parameters to a dictionary for encoding
+        encoded_values = {}
+        try:
+            if self.content:
+                encoded_values['content'] = self.content
+        except:
+            pass
+
+        try:
+            if self.is_private_from_source:
+                encoded_values['is_private_from_source'] = self.is_private_from_source
+        except:
+            pass
+
+        try:
+            if self.url:
+                encoded_values['url'] = self.url
+        except:
+            pass
+
+        try:
+            if self.title:
+                encoded_values['title'] = self.title
+        except:
+            pass
+
+        try:
+            if self.description:
+                encoded_values['description'] = self.description
+        except:
+            pass
+
+        try:
+            if folder_id:
+                encoded_values['folder_id'] = folder_id
+        except:
+            pass
+
+
+        # send the http request
+        response, html = self.parent.http.request(
+            "/".join([_BASE_, _API_VERSION_, _BOOKMARKS_ADD_]),
+            method='POST',
+            body=urlencode(encoded_values))
+        if response.get("status") == "200":
+            self.__html = html
+        return self.__html
 
     def move(self, folder_id):
         response, html = self.parent.http.request(
