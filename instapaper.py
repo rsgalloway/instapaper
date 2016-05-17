@@ -55,7 +55,7 @@ An unofficial Python wrapper to the full Instapaper API.
 http://www.instapaper.com/api/full
 """
 
-"""Updated by J-Hurd (https://github.com/J-Hurd/) on Feb. 6, 2016."""
+"""Updated by Floyd Hightower (https://github.com/fhightower/) on Feb. 6, 2016."""
 
 _BASE_ = "https://www.instapaper.com"
 _API_VERSION_ = "api/1"
