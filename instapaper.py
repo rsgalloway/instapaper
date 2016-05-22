@@ -1,5 +1,7 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 # ---------------------------------------------------------------------------------------------
-# Copyright (c) 2013, Ryan Galloway (ryan@rsgalloway.com)
+# Copyright (c) 2013-2016, Ryan Galloway (ryan@rsgalloway.com)
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
@@ -35,7 +37,7 @@ import os
 import sys
 import urllib2
 import urlparse
-import simplejson as json
+import json  # simplejson as 
 import oauth2 as oauth
 from lxml import etree
 from urllib import urlencode
@@ -56,8 +58,17 @@ http://www.instapaper.com/api/full
 _BASE_ = "https://www.instapaper.com"
 _API_VERSION_ = "api/1"
 _ACCESS_TOKEN_ = "oauth/access_token"
+_ACCOUNT_ = "account/verify_credentials"
 _BOOKMARKS_LIST_ = "bookmarks/list"
 _BOOKMARKS_TEXT_ = "bookmarks/get_text"
+_BOOKMARKS_STAR_ = "bookmarks/star"
+_BOOKMARKS_UNSTAR_ = "bookmarks/unstar"
+_BOOKMARKS_ADD_ = "bookmarks/add"
+_BOOKMARKS_DELETE_ = "bookmarks/delete"
+_BOOKMARKS_MOVE_ = "bookmarks/move"
+_FOLDERS_ADD_ = "folders/add"
+_FOLDERS_LIST_ = "folders/list"
+
 
 class _DeHTMLParser(HTMLParser):
     def __init__(self):
@@ -87,6 +98,10 @@ class _DeHTMLParser(HTMLParser):
 def dehtml(text):
     try:
         parser = _DeHTMLParser()
+        if text:
+            text = text.decode('UTF-8')
+        else:
+            return None
         parser.feed(text)
         parser.close()
         return parser.text()
@@ -94,12 +109,36 @@ def dehtml(text):
         print_exc(file=stderr)
         return text
 
+
 class Bookmark(object):
     def __init__(self, parent, params):
         self.parent = parent
         self.__text = None
         self.__html = None
         self.__dict__.update(params)
+        """
+        {'hash': '21iTZfCr', 
+        'description': u'', 
+        'parent': <instapaper.Instapaper object at 0x104055ad0>, 
+        'title': u'Let\u2019s Ignore Each Other Together', 
+        'url': 'https://medium.com/re-form/lets-ignore-each-other-together-d7cf46a8a8ad', 
+        '_Bookmark__html': None, 
+        'time': 1422657611, 
+        'progress_timestamp': 1422662236, 
+        'bookmark_id': 550386320, 
+        '_Bookmark__text': None, 
+        'progress': 0.0, 
+        'starred': '0', 
+        'type': 'bookmark', 
+        'content': u'',
+        'private_source': u'',
+        # is_private_from_source is used for adding a bookmark
+        'is_private_from_source': u''}
+        """
+        try:
+            self.starred = (self.starred == '1') # convert to boolean
+        except:
+            self.starred = False
 
     @property
     def html(self):
@@ -107,8 +146,8 @@ class Bookmark(object):
             response, html = self.parent.http.request(
                         "/".join([_BASE_, _API_VERSION_, _BOOKMARKS_TEXT_]),
                         method='POST',
-                        body=urlencode({ 
-                            'bookmark_id': self.bookmark_id, 
+                        body=urlencode({
+                            'bookmark_id': self.bookmark_id,
                             }))
             if response.get("status") == "200":
                 self.__html = html
@@ -121,13 +160,100 @@ class Bookmark(object):
         return self.__text
 
     def star(self):
-        raise NotImplementedError
+        response, html = self.parent.http.request(
+                    "/".join([_BASE_, _API_VERSION_, _BOOKMARKS_STAR_]),
+                    method='POST',
+                    body=urlencode({
+                        'bookmark_id': self.bookmark_id,
+                        }))
+        if response.get("status") == "200":
+            self.starred = True
+            return True
+        return False
+
+    def unstar(self):
+        response, html = self.parent.http.request(
+                    "/".join([_BASE_, _API_VERSION_, _BOOKMARKS_UNSTAR_]),
+                    method='POST',
+                    body=urlencode({
+                        'bookmark_id': self.bookmark_id,
+                        }))
+        if response.get("status") == "200":
+            self.starred = False
+            return True
+        return False
 
     def delete(self):
-        raise NotImplementedError
+        response, html = self.parent.http.request(
+                    "/".join([_BASE_, _API_VERSION_, _BOOKMARKS_DELETE_]),
+                    method='POST',
+                    body=urlencode({
+                        'bookmark_id': self.bookmark_id,
+                        }))
+        if response.get("status") == "200":
+            return True
+        return False
 
-    def save(self):
-        raise NotImplementedError
+    def save(self, folder_id=None):
+        # add appropriate parameters to a dictionary for encoding
+        encoded_values = {}
+        try:
+            if self.content:
+                encoded_values['content'] = self.content
+        except:
+            pass
+
+        try:
+            if self.is_private_from_source:
+                encoded_values['is_private_from_source'] = self.is_private_from_source
+        except:
+            pass
+
+        try:
+            if self.url:
+                encoded_values['url'] = self.url
+        except:
+            pass
+
+        try:
+            if self.title:
+                encoded_values['title'] = self.title
+        except:
+            pass
+
+        try:
+            if self.description:
+                encoded_values['description'] = self.description
+        except:
+            pass
+
+        try:
+            if folder_id:
+                encoded_values['folder_id'] = folder_id
+        except:
+            pass
+
+        # send the http request
+        response, html = self.parent.http.request(
+            "/".join([_BASE_, _API_VERSION_, _BOOKMARKS_ADD_]),
+            method='POST',
+            body=urlencode(encoded_values))
+        if response.get("status") == "200":
+            self.__html = html
+        return self.__html
+
+    def move(self, folder_id):
+        response, html = self.parent.http.request(
+                    "/".join([_BASE_, _API_VERSION_, _BOOKMARKS_MOVE_]),
+                    method='POST',
+                    body=urlencode({
+                        'bookmark_id': self.bookmark_id,
+                        'folder_id': folder_id
+                        }))
+        if response.get("status") == "200":
+            return True
+        return False
+
 
 class Instapaper(object):
     def __init__(self, oauthkey, oauthsec):
@@ -144,22 +270,38 @@ class Instapaper(object):
                     'x_auth_username': username,
                     'x_auth_password': password}))
         _oauth = dict(urlparse.parse_qsl(content))
-        self.token = oauth.Token(_oauth['oauth_token'], 
-                                 _oauth['oauth_token_secret'])
+        self.login_with_token(_oauth['oauth_token'], _oauth['oauth_token_secret'])
+       
+    def login_with_token(self, oauth_token, oauth_token_secret):
+        """
+        When you want to access a user's data using their existing token
+        """
+        self.token = oauth.Token(oauth_token, oauth_token_secret)
         self.http = oauth.Client(self.consumer, self.token)
 
-    def bookmarks(self, folder="unread", limit=10):
+    def user(self):
+        response, data = self.http.request(
+                    "/".join([_BASE_, _API_VERSION_, _ACCOUNT_]),
+                    method='POST',
+                    body=None)
+        user = json.loads(data)[0]
+        if user.get("type") == "error":
+                raise Exception(item.get("message"))
+        return user
+
+    def bookmarks(self, folder="unread", limit=10, have=""):
         """
-        folder_id: Optional. Possible values are unread (default), 
+        folder_id: Optional. Possible values are unread (default),
                    starred, archive, or a folder_id value.
         limit: Optional. A number between 1 and 500, default 25.
         """
         response, data = self.http.request(
                     "/".join([_BASE_, _API_VERSION_, _BOOKMARKS_LIST_]),
                     method='POST',
-                    body=urlencode({ 
-                        'folder_id': folder, 
-                        'limit': limit}))
+                    body=urlencode({
+                        'folder_id': folder,
+                        'limit': limit,
+                        'have': have}))
         marks = []
         items = json.loads(data)
         for item in items:
@@ -168,3 +310,27 @@ class Instapaper(object):
             elif item.get("type") == "bookmark":
                 marks.append(Bookmark(self, item))
         return marks
+    
+    def folders(self):
+        response, data = self.http.request(
+                    "/".join([_BASE_, _API_VERSION_, _FOLDERS_LIST_]),
+                    method='POST',
+                    body=urlencode({}))
+        folders = []
+        items = json.loads(data)
+        for item in items:
+            folders.append(item)
+        return folders
+
+    def create_folder(self, title):
+        """
+        title: Required.  Title of the folder.
+        """
+        response, data = self.http.request(
+                    "/".join([_BASE_, _API_VERSION_, _FOLDERS_ADD_]),
+                    method='POST',
+                    body=urlencode({
+                        'title': title}))
+        if response.get("status") == "200":
+            return True
+        raise Exception(response)

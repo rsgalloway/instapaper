@@ -22,11 +22,14 @@ Or from source ::
 Basic Usage
 -----------
 
-Currently, only fetching existing bookmarks are supported.  ::
+Logging in: ::
 
     >>> from instapaper import Instapaper as ipaper
-    >>> ipaper(key, secret)
-    >>> ipaper.login(login, pw)
+    >>> i = ipaper(INSTAPAPER_KEY, INSTAPAPER_SECRET)
+    >>> i.login(email_address, password)
+
+Getting bookmarks: ::
+
     >>> marks = i.bookmarks()
 
 Get the html: ::
@@ -37,6 +40,16 @@ Or the raw text: ::
     
     >>> marks[0].text
 
+Folders: ::
+
+    >>> folders = i.folders()
+    >>> for f in folders:
+    ...     print f.folder_id, f.title
+
+Move bookmark: ::
+
+    >>> marks[0].move(f.folder_id)
+
 
 Playback
 --------
@@ -45,7 +58,7 @@ Have a long commute home from work? Have your Instapaper bookmarks read back to 
 using "utter" (pip install utter). You can even have them read back to you in a
 differnet language, for example Italian: ::
 
-    <<< import utter
+    >>> import utter
     >>> for m in marks:
     ...     utter.play(m.text, target="it")
 
