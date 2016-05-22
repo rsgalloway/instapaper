@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # ---------------------------------------------------------------------------------------------
-# Copyright (c) 2013, Ryan Galloway (ryan@rsgalloway.com)
+# Copyright (c) 2013-2016, Ryan Galloway (ryan@rsgalloway.com)
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
@@ -55,8 +55,6 @@ An unofficial Python wrapper to the full Instapaper API.
 http://www.instapaper.com/api/full
 """
 
-"""Updated by Floyd Hightower (https://github.com/fhightower/) on Feb. 6, 2016."""
-
 _BASE_ = "https://www.instapaper.com"
 _API_VERSION_ = "api/1"
 _ACCESS_TOKEN_ = "oauth/access_token"
@@ -70,6 +68,7 @@ _BOOKMARKS_DELETE_ = "bookmarks/delete"
 _BOOKMARKS_MOVE_ = "bookmarks/move"
 _FOLDERS_ADD_ = "folders/add"
 _FOLDERS_LIST_ = "folders/list"
+
 
 class _DeHTMLParser(HTMLParser):
     def __init__(self):
@@ -109,6 +108,7 @@ def dehtml(text):
     except:
         print_exc(file=stderr)
         return text
+
 
 class Bookmark(object):
     def __init__(self, parent, params):
@@ -233,7 +233,6 @@ class Bookmark(object):
         except:
             pass
 
-
         # send the http request
         response, html = self.parent.http.request(
             "/".join([_BASE_, _API_VERSION_, _BOOKMARKS_ADD_]),
@@ -254,6 +253,7 @@ class Bookmark(object):
         if response.get("status") == "200":
             return True
         return False
+
 
 class Instapaper(object):
     def __init__(self, oauthkey, oauthsec):
@@ -334,4 +334,3 @@ class Instapaper(object):
         if response.get("status") == "200":
             return True
         raise Exception(response)
-

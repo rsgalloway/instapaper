@@ -22,11 +22,14 @@ Or from source ::
 Basic Usage
 -----------
 
-Currently, only fetching existing bookmarks are supported.  ::
+Logging in: ::
 
     >>> from instapaper import Instapaper as ipaper
-    >>> i = ipaper(key, secret)
-    >>> i.login(login, pw)
+    >>> i = ipaper(INSTAPAPER_KEY, INSTAPAPER_SECRET)
+    >>> i.login(email_address, password)
+
+Getting bookmarks: ::
+
     >>> marks = i.bookmarks()
 
 Get the html: ::
@@ -37,15 +40,15 @@ Or the raw text: ::
     
     >>> marks[0].text
 
-Save to a folder: ::
-
-    >>> marks[0].move(folder_id=1234567)
-
 Folders: ::
 
     >>> folders = i.folders()
     >>> for f in folders:
     ...     print f.folder_id, f.title
+
+Move bookmark: ::
+
+    >>> marks[0].move(f.folder_id)
 
 
 Playback

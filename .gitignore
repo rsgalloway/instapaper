@@ -1,4 +1,8 @@
 venv
 build
+dist
+MANIFEST
 *.pyc
 *.swp
+*~
+.DS_Store

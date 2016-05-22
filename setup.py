@@ -35,7 +35,7 @@
 from distutils.core import setup
 setup(
     name='instapaper',
-    version='0.2',
+    version='0.3',
     description='Unofficial Instapaper Python API.',
     author='Ryan Galloway',
     author_email='ryan@rsgalloway.com',
