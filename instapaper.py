@@ -63,6 +63,8 @@ _BOOKMARKS_LIST_ = "bookmarks/list"
 _BOOKMARKS_TEXT_ = "bookmarks/get_text"
 _BOOKMARKS_STAR_ = "bookmarks/star"
 _BOOKMARKS_UNSTAR_ = "bookmarks/unstar"
+_BOOKMARKS_ARCHIVE_ = "bookmarks/archive"
+_BOOKMARKS_UNARCHIVE_ = "bookmarks/unarchive"
 _BOOKMARKS_ADD_ = "bookmarks/add"
 _BOOKMARKS_DELETE_ = "bookmarks/delete"
 _BOOKMARKS_MOVE_ = "bookmarks/move"
@@ -174,6 +176,30 @@ class Bookmark(object):
     def unstar(self):
         response, html = self.parent.http.request(
                     "/".join([_BASE_, _API_VERSION_, _BOOKMARKS_UNSTAR_]),
+                    method='POST',
+                    body=urlencode({
+                        'bookmark_id': self.bookmark_id,
+                        }))
+        if response.get("status") == "200":
+            self.starred = False
+            return True
+        return False
+    
+    def archive(self):
+        response, html = self.parent.http.request(
+                    "/".join([_BASE_, _API_VERSION_, _BOOKMARKS_ARCHIVE_]),
+                    method='POST',
+                    body=urlencode({
+                        'bookmark_id': self.bookmark_id,
+                        }))
+        if response.get("status") == "200":
+            self.starred = True
+            return True
+        return False
+
+    def unarchive(self):
+        response, html = self.parent.http.request(
+                    "/".join([_BASE_, _API_VERSION_, _BOOKMARKS_UNARCHIVE_]),
                     method='POST',
                     body=urlencode({
                         'bookmark_id': self.bookmark_id,
