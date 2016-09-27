@@ -37,7 +37,7 @@ import os
 import sys
 import urllib2
 import urlparse
-import json  # simplejson as 
+import json
 import oauth2 as oauth
 from lxml import etree
 from urllib import urlencode
@@ -53,6 +53,10 @@ __doc__ = """
 An unofficial Python wrapper to the full Instapaper API.
 
 http://www.instapaper.com/api/full
+"""
+
+__todo__ = """
+- refactor http requests to standalone function
 """
 
 _BASE_ = "https://www.instapaper.com"
