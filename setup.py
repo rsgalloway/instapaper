@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # ---------------------------------------------------------------------------------------------
-# Copyright (c) 2012-2013, Ryan Galloway (ryan@rsgalloway.com)
+# Copyright (c) 2012-2016, Ryan Galloway (ryan@rsgalloway.com)
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
@@ -35,7 +35,7 @@
 from distutils.core import setup
 setup(
     name='instapaper',
-    version='0.3',
+    version='0.3.1',
     description='Unofficial Instapaper Python API.',
     author='Ryan Galloway',
     author_email='ryan@rsgalloway.com',
