@@ -33,6 +33,11 @@
 # ---------------------------------------------------------------------------------------------
 
 from distutils.core import setup
+
+requirements = [
+    'future>=0.15.2',
+]
+
 setup(
     name='instapaper',
     version='0.3.1',
@@ -41,4 +46,5 @@ setup(
     author_email='ryan@rsgalloway.com',
     url='http://github.com/rsgalloway/instapaper',
     py_modules=['instapaper'],
+    install_requires=requirements,
 )
