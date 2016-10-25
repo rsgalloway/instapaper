@@ -33,12 +33,15 @@
 # http://github.com/rsgalloway/instapaper
 # ---------------------------------------------------------------------------------------------
 
-import urlparse
+from future import standard_library
+standard_library.install_aliases()
+from builtins import object
+import urllib.parse
 import json
 import oauth2 as oauth
-from urllib import urlencode
+from urllib.parse import urlencode
 
-from HTMLParser import HTMLParser
+from html.parser import HTMLParser
 from re import sub
 from sys import stderr
 from traceback import print_exc
@@ -298,7 +301,7 @@ class Instapaper(object):
                 'x_auth_mode': 'client_auth',
                 'x_auth_username': username,
                 'x_auth_password': password}))
-        _oauth = dict(urlparse.parse_qsl(content))
+        _oauth = dict(urllib.parse.parse_qsl(content))
         self.login_with_token(_oauth['oauth_token'], _oauth['oauth_token_secret'])
 
     def login_with_token(self, oauth_token, oauth_token_secret):
