@@ -301,7 +301,7 @@ class Instapaper(object):
                 'x_auth_mode': 'client_auth',
                 'x_auth_username': username,
                 'x_auth_password': password}))
-        _oauth = dict(urllib.parse.parse_qsl(content))
+        _oauth = dict(urllib.parse.parse_qsl(content.decode('utf-8')))
         self.login_with_token(_oauth['oauth_token'], _oauth['oauth_token_secret'])
 
     def login_with_token(self, oauth_token, oauth_token_secret):
@@ -335,7 +335,7 @@ class Instapaper(object):
                 'limit': limit,
                 'have': have}))
         marks = []
-        items = json.loads(data)
+        items = json.loads(data.decode('utf-8'))
         for item in items:
             if item.get("type") == "error":
                 raise Exception(item.get("message"))
