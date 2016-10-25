@@ -33,9 +33,6 @@
 # http://github.com/rsgalloway/instapaper
 # ---------------------------------------------------------------------------------------------
 
-import os
-import sys
-import urllib2
 import urlparse
 import json
 import oauth2 as oauth
@@ -123,19 +120,19 @@ class Bookmark(object):
         self.__html = None
         self.__dict__.update(params)
         """
-        {'hash': '21iTZfCr', 
-        'description': u'', 
-        'parent': <instapaper.Instapaper object at 0x104055ad0>, 
-        'title': u'Let\u2019s Ignore Each Other Together', 
-        'url': 'https://medium.com/re-form/lets-ignore-each-other-together-d7cf46a8a8ad', 
-        '_Bookmark__html': None, 
-        'time': 1422657611, 
-        'progress_timestamp': 1422662236, 
-        'bookmark_id': 550386320, 
-        '_Bookmark__text': None, 
-        'progress': 0.0, 
-        'starred': '0', 
-        'type': 'bookmark', 
+        {'hash': '21iTZfCr',
+        'description': u'',
+        'parent': <instapaper.Instapaper object at 0x104055ad0>,
+        'title': u'Let\u2019s Ignore Each Other Together',
+        'url': 'https://medium.com/re-form/lets-ignore-each-other-together-d7cf46a8a8ad',
+        '_Bookmark__html': None,
+        'time': 1422657611,
+        'progress_timestamp': 1422662236,
+        'bookmark_id': 550386320,
+        '_Bookmark__text': None,
+        'progress': 0.0,
+        'starred': '0',
+        'type': 'bookmark',
         'content': u'',
         'private_source': u'',
         # is_private_from_source is used for adding a bookmark
@@ -188,7 +185,7 @@ class Bookmark(object):
             self.starred = False
             return True
         return False
-    
+
     def archive(self):
         response, html = self.parent.http.request(
                     "/".join([_BASE_, _API_VERSION_, _BOOKMARKS_ARCHIVE_]),
@@ -301,7 +298,7 @@ class Instapaper(object):
                     'x_auth_password': password}))
         _oauth = dict(urlparse.parse_qsl(content))
         self.login_with_token(_oauth['oauth_token'], _oauth['oauth_token_secret'])
-       
+
     def login_with_token(self, oauth_token, oauth_token_secret):
         """
         When you want to access a user's data using their existing token
@@ -340,7 +337,7 @@ class Instapaper(object):
             elif item.get("type") == "bookmark":
                 marks.append(Bookmark(self, item))
         return marks
-    
+
     def folders(self):
         response, data = self.http.request(
                     "/".join([_BASE_, _API_VERSION_, _FOLDERS_LIST_]),
