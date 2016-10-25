@@ -36,6 +36,7 @@ from distutils.core import setup
 
 requirements = [
     'future>=0.15.2',
+    'oauth2>=1.9.0.post1',
 ]
 
 setup(
