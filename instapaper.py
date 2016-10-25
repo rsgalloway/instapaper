@@ -315,7 +315,7 @@ class Instapaper(object):
             body=None)
         user = json.loads(data)[0]
         if user.get("type") == "error":
-            raise Exception(item.get("message"))
+            raise Exception(data.get("message"))
         return user
 
     def bookmarks(self, folder="unread", limit=10, have=""):
