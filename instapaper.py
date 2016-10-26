@@ -169,7 +169,7 @@ class Bookmark(object):
                     'bookmark_id': self.bookmark_id,
                 }))
             if response.get("status") == "200":
-                self.__html = html
+                self.__html = html.decode('utf-8')
         return self.__html
 
     @property
