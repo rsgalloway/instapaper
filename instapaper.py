@@ -152,6 +152,13 @@ class Bookmark(object):
         except:
             self.starred = False
 
+    def __str__(self):
+        return '{}\n{}\n{}'.format(
+            self.bookmark_id,
+            self.title,
+            self.url,
+        )
+
     @property
     def html(self):
         if self.__html is None:
