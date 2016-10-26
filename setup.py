@@ -32,7 +32,7 @@
 # http://github.com/rsgalloway/instapaper
 # ---------------------------------------------------------------------------------------------
 
-from distutils.core import setup
+from setuptools import setup
 
 requirements = [
     'future>=0.15.2',
