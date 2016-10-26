@@ -321,7 +321,7 @@ class Instapaper(object):
             "/".join([_BASE_, _API_VERSION_, _ACCOUNT_]),
             method='POST',
             body=None)
-        user = json.loads(data)[0]
+        user = json.loads(data.decode('utf-8'))[0]
         if user.get("type") == "error":
             raise Exception(data.get("message"))
         return user
@@ -354,7 +354,7 @@ class Instapaper(object):
             method='POST',
             body=urlencode({}))
         folders = []
-        items = json.loads(data)
+        items = json.loads(data.decode('utf-8'))
         for item in items:
             folders.append(item)
         return folders
