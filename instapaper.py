@@ -43,7 +43,6 @@ else:
     from urllib import urlencode
     from HTMLParser import HTMLParser
 
-
 import json
 import oauth2 as oauth
 
@@ -110,12 +109,18 @@ def dehtml(text):
     try:
         parser = _DeHTMLParser()
         if text:
-            text = text.decode('UTF-8')
+            if sys.version_info > (3, 0):
+                text = str(text, 'UTF-8')
+            else:
+                text = text.decode('UTF-8')
+
         else:
             return None
+
         parser.feed(text)
         parser.close()
         return parser.text()
+
     except:
         print_exc(file=stderr)
         return text

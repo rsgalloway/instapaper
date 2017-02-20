@@ -2,6 +2,7 @@ venv
 build
 dist
 MANIFEST
+.netrc
 *.pyc
 *.swp
 *~
