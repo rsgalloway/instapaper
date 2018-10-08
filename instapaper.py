@@ -78,6 +78,7 @@ _BOOKMARKS_DELETE_ = "bookmarks/delete"
 _BOOKMARKS_MOVE_ = "bookmarks/move"
 _FOLDERS_ADD_ = "folders/add"
 _FOLDERS_LIST_ = "folders/list"
+_FOLDERS_DELETE = "folders/delete"
 
 
 class _DeHTMLParser(HTMLParser):
@@ -378,3 +379,16 @@ class Instapaper(object):
         if response.get("status") == "200":
             return True
         raise Exception(response)
+
+    def delete_folder(self, folder_id):
+        """
+        folder_id: Required.  ID of the folder.
+        """        
+        response, data = self.http.request(
+            "/".join([_BASE_, _API_VERSION_, _FOLDERS_DELETE]),
+            method='POST',
+            body=urlencode({
+                'folder_id': folder_id}))
+        if response.get("status") == "200":
+            return True
+        raise Exception(response)        
