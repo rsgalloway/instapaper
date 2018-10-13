@@ -111,7 +111,9 @@ def dehtml(text):
     try:
         parser = _DeHTMLParser()
         if text:
-            text = text.decode('UTF-8')
+            if sys.version_info < (3, 0):
+                text = text.decode('UTF-8')
+
         else:
             return None
         parser.feed(text)
@@ -383,7 +385,7 @@ class Instapaper(object):
     def delete_folder(self, folder_id):
         """
         folder_id: Required.  ID of the folder.
-        """        
+        """
         response, data = self.http.request(
             "/".join([_BASE_, _API_VERSION_, _FOLDERS_DELETE]),
             method='POST',
@@ -391,4 +393,4 @@ class Instapaper(object):
                 'folder_id': folder_id}))
         if response.get("status") == "200":
             return True
-        raise Exception(response)        
+        raise Exception(response)
