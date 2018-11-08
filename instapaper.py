@@ -337,12 +337,7 @@ class Instapaper(object):
             raise Exception(data.get("message"))
         return user
 
-    def bookmarks(self, folder="unread", limit=10, have=""):
-        """
-        folder_id: Optional. Possible values are unread (default),
-                   starred, archive, or a folder_id value.
-        limit: Optional. A number between 1 and 500, default 25.
-        """
+    def bookmarks_raw(self, *, folder, limit, have):
         response, data = self.http.request(
             "/".join([_BASE_, _API_VERSION_, _BOOKMARKS_LIST_]),
             method='POST',
@@ -350,8 +345,17 @@ class Instapaper(object):
                 'folder_id': folder,
                 'limit': limit,
                 'have': have}))
-        marks = []
         items = json.loads(data.decode('utf-8'))
+        return items
+
+    def bookmarks(self, folder="unread", limit=10, have=""):
+        """
+        folder_id: Optional. Possible values are unread (default),
+                   starred, archive, or a folder_id value.
+        limit: Optional. A number between 1 and 500, default 25.
+        """
+        items = self.bookmarks_raw(folder=folder, limit=limit, have=have)
+        marks = []
         for item in items:
             if item.get("type") == "error":
                 raise Exception(item.get("message"))
