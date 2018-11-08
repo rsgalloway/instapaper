@@ -318,6 +318,7 @@ class Instapaper(object):
                 'x_auth_password': password}))
         _oauth = dict(urlparse.parse_qsl(content.decode('utf-8')))
         self.login_with_token(_oauth['oauth_token'], _oauth['oauth_token_secret'])
+        return _oauth
 
     def login_with_token(self, oauth_token, oauth_token_secret):
         """
