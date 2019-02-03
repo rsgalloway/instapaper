@@ -1,8 +1,11 @@
-venv
-build
-dist
-MANIFEST
 *.pyc
 *.swp
 *~
 .DS_Store
+.vscode
+*.egg-info/
+dist
+build
+_build
+MANIFEST
+__pycache__
