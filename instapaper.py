@@ -318,6 +318,7 @@ class Instapaper(object):
                 'x_auth_password': password}))
         _oauth = dict(urlparse.parse_qsl(content.decode('utf-8')))
         self.login_with_token(_oauth['oauth_token'], _oauth['oauth_token_secret'])
+        return _oauth
 
     def login_with_token(self, oauth_token, oauth_token_secret):
         """
@@ -336,21 +337,27 @@ class Instapaper(object):
             raise Exception(data.get("message"))
         return user
 
-    def bookmarks(self, folder="unread", limit=10, have=""):
+    def bookmarks_raw(self, *, folder, limit, have):
+        params = {'folder_id': folder}
+        if limit is not None:
+            params['limit'] = limit
+        if have is not None:
+            params['have'] = params
+        response, data = self.http.request(
+            "/".join([_BASE_, _API_VERSION_, _BOOKMARKS_LIST_]),
+            method='POST',
+            body=urlencode(params))
+        items = json.loads(data.decode('utf-8'))
+        return items
+
+    def bookmarks(self, folder="unread", limit=None, have=None):
         """
         folder_id: Optional. Possible values are unread (default),
                    starred, archive, or a folder_id value.
         limit: Optional. A number between 1 and 500, default 25.
         """
-        response, data = self.http.request(
-            "/".join([_BASE_, _API_VERSION_, _BOOKMARKS_LIST_]),
-            method='POST',
-            body=urlencode({
-                'folder_id': folder,
-                'limit': limit,
-                'have': have}))
+        items = self.bookmarks_raw(folder=folder, limit=limit, have=have)
         marks = []
-        items = json.loads(data.decode('utf-8'))
         for item in items:
             if item.get("type") == "error":
                 raise Exception(item.get("message"))
