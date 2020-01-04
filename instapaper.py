@@ -338,17 +338,19 @@ class Instapaper(object):
         return user
 
     def bookmarks_raw(self, *, folder, limit, have):
+        params = {'folder_id': folder}
+        if limit is not None:
+            params['limit'] = limit
+        if have is not None:
+            params['have'] = params
         response, data = self.http.request(
             "/".join([_BASE_, _API_VERSION_, _BOOKMARKS_LIST_]),
             method='POST',
-            body=urlencode({
-                'folder_id': folder,
-                'limit': limit,
-                'have': have}))
+            body=urlencode(params))
         items = json.loads(data.decode('utf-8'))
         return items
 
-    def bookmarks(self, folder="unread", limit=10, have=""):
+    def bookmarks(self, folder="unread", limit=None, have=None):
         """
         folder_id: Optional. Possible values are unread (default),
                    starred, archive, or a folder_id value.
