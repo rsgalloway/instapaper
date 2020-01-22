@@ -300,6 +300,12 @@ class Bookmark(object):
             return True
         return False
 
+    def get_highlights(self):
+        response, data = self.parent.http.request(
+            "/".join([_BASE_, 'api/1.1', 'bookmarks', str(self.bookmark_id), 'highlights']),
+            method='POST')
+        if response.get("status") == "200":
+            return data.decode()
 
 class Instapaper(object):
 
