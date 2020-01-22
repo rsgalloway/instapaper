@@ -79,6 +79,7 @@ _BOOKMARKS_MOVE_ = "bookmarks/move"
 _FOLDERS_ADD_ = "folders/add"
 _FOLDERS_LIST_ = "folders/list"
 _FOLDERS_DELETE = "folders/delete"
+_HIGHLIGHTS_ = "highlights"
 
 
 class _DeHTMLParser(HTMLParser):
@@ -302,12 +303,12 @@ class Bookmark(object):
 
     def get_highlights(self):
         response, data = self.parent.http.request(
-            "/".join([_BASE_, 'api/1.1', 'bookmarks', str(self.bookmark_id), 'highlights']),
+            "/".join([_BASE_, _API_VERSION_, 'bookmarks', str(self.bookmark_id), 'highlights']),
             method='POST')
         if response.get("status") == "200":
             return data.decode()
 
-   def create_highlight(self, highlight_text, position=0):
+    def create_highlight(self, highlight_text, position=0):
         """
         highlight_text: Required. The text for the highlight
         position: Optional. The 0-indexed position of text in the content. Defaults to 0.
@@ -321,6 +322,18 @@ class Bookmark(object):
             }))
         if response.get("status") == "200":
             return data.decode()
+
+    def delete_highlight(self, highlight_id):
+        """
+        highlight_id: Required. ID of the highlight.
+        """
+        response, data = self.parent.http.request(
+            "/".join([_BASE_, _API_VERSION_, _HIGHLIGHTS_, str(highlight_id), 'delete']),
+            method='POST')
+        if response.get("status") == "200":
+            return True
+        return False
+
 
 class Instapaper(object):
 
