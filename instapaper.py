@@ -307,6 +307,21 @@ class Bookmark(object):
         if response.get("status") == "200":
             return data.decode()
 
+   def create_highlight(self, highlight_text, position=0):
+        """
+        highlight_text: Required. The text for the highlight
+        position: Optional. The 0-indexed position of text in the content. Defaults to 0.
+        """
+        response, data = self.parent.http.request(
+            "/".join([_BASE_, _API_VERSION_, 'bookmarks', str(self.bookmark_id), 'highlight']),
+            method='POST',
+            body=urlencode({
+                'text': highlight_text,
+                'position': position
+            }))
+        if response.get("status") == "200":
+            return data.decode()
+
 class Instapaper(object):
 
     def __init__(self, oauthkey, oauthsec):
