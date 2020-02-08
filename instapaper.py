@@ -64,7 +64,7 @@ __todo__ = """
 """
 
 _BASE_ = "https://www.instapaper.com"
-_API_VERSION_ = "api/1"
+_API_VERSION_ = "api/1.1"
 _ACCESS_TOKEN_ = "oauth/access_token"
 _ACCOUNT_ = "account/verify_credentials"
 _BOOKMARKS_LIST_ = "bookmarks/list"
@@ -79,6 +79,7 @@ _BOOKMARKS_MOVE_ = "bookmarks/move"
 _FOLDERS_ADD_ = "folders/add"
 _FOLDERS_LIST_ = "folders/list"
 _FOLDERS_DELETE = "folders/delete"
+_HIGHLIGHTS_ = "highlights"
 
 
 class _DeHTMLParser(HTMLParser):
@@ -300,6 +301,39 @@ class Bookmark(object):
             return True
         return False
 
+    def get_highlights(self):
+        response, data = self.parent.http.request(
+            "/".join([_BASE_, _API_VERSION_, 'bookmarks', str(self.bookmark_id), 'highlights']),
+            method='POST')
+        if response.get("status") == "200":
+            return data.decode()
+
+    def create_highlight(self, highlight_text, position=0):
+        """
+        highlight_text: Required. The text for the highlight
+        position: Optional. The 0-indexed position of text in the content. Defaults to 0.
+        """
+        response, data = self.parent.http.request(
+            "/".join([_BASE_, _API_VERSION_, 'bookmarks', str(self.bookmark_id), 'highlight']),
+            method='POST',
+            body=urlencode({
+                'text': highlight_text,
+                'position': position
+            }))
+        if response.get("status") == "200":
+            return data.decode()
+
+    def delete_highlight(self, highlight_id):
+        """
+        highlight_id: Required. ID of the highlight.
+        """
+        response, data = self.parent.http.request(
+            "/".join([_BASE_, _API_VERSION_, _HIGHLIGHTS_, str(highlight_id), 'delete']),
+            method='POST')
+        if response.get("status") == "200":
+            return True
+        return False
+
 
 class Instapaper(object):
 
@@ -349,14 +383,15 @@ class Instapaper(object):
                 'folder_id': folder,
                 'limit': limit,
                 'have': have}))
-        marks = []
+        bookmarks = []
         items = json.loads(data.decode('utf-8'))
-        for item in items:
-            if item.get("type") == "error":
-                raise Exception(item.get("message"))
-            elif item.get("type") == "bookmark":
-                marks.append(Bookmark(self, item))
-        return marks
+        for key in items.keys():
+            if key == "error":
+                raise Exception(items[key])
+            elif key == "bookmarks":
+                for bookmark in items[key]:
+                    bookmarks.append(Bookmark(self, bookmark))
+        return bookmarks
 
     def folders(self):
         response, data = self.http.request(
