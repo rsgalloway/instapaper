@@ -307,7 +307,9 @@ class Bookmark(object):
             method='POST')
         if response.get("status") == "200":
             return data.decode()
-
+        else:
+            raise Exception(response)
+            
     def create_highlight(self, highlight_text, position=0):
         """
         highlight_text: Required. The text for the highlight
@@ -322,7 +324,9 @@ class Bookmark(object):
             }))
         if response.get("status") == "200":
             return data.decode()
-
+        else:
+            raise Exception(response)
+   
     def delete_highlight(self, highlight_id):
         """
         highlight_id: Required. ID of the highlight.
