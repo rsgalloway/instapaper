@@ -360,7 +360,7 @@ class Instapaper(object):
                 'x_auth_mode': 'client_auth',
                 'x_auth_username': username,
                 'x_auth_password': password}))
-        if response.status != 200:
+        if response.status in (401, 403):
             raise InstapaperAuthenticationException("User could not be authenticated. Please check that user and OAuth credentials are correct.")
         _oauth = dict(urlparse.parse_qsl(content.decode('utf-8')))
         self.login_with_token(_oauth['oauth_token'], _oauth['oauth_token_secret'])
