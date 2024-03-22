@@ -339,9 +339,19 @@ class Bookmark(object):
         return False
 
 
+class InstapaperException(Exception):
+    pass
+
+
+class InstapaperAuthenticationException(InstapaperException):
+    pass
+
+
 class Instapaper(object):
 
     def __init__(self, oauthkey, oauthsec):
+        if not oauthkey or not oauthsec:
+            raise InstapaperAuthenticationException("No OAuth key or secret found. Please provide both.")
         self.consumer = oauth.Consumer(oauthkey, oauthsec)
         self.client = oauth.Client(self.consumer)
         self.token = None
@@ -354,6 +364,8 @@ class Instapaper(object):
                 'x_auth_mode': 'client_auth',
                 'x_auth_username': username,
                 'x_auth_password': password}))
+        if response.status in (401, 403):
+            raise InstapaperAuthenticationException("User could not be authenticated. Please check that user and OAuth credentials are correct.")
         _oauth = dict(urlparse.parse_qsl(content.decode('utf-8')))
         self.login_with_token(_oauth['oauth_token'], _oauth['oauth_token_secret'])
 
