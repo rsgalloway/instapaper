@@ -5,10 +5,10 @@ Unofficial full Instapaper API Python wrapper.
 
 ## Installation
 
-Using easy install
+The easiest way to install is with pip:
 
 ```shell
-$ easy_install instapaper
+$ pip install -U instapaper
 ```
 
 Or from source
@@ -16,7 +16,7 @@ Or from source
 ```shell
 $ git clone https://github.com/rsgalloway/instapaper.git
 $ cd instapaper
-$ python setup.py install
+$ pip install .
 ```
 
 #### envstack
