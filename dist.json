@@ -1,0 +1,13 @@
+{
+    "author": "ryan@rsg.io",
+    "targets": {
+        "lib": {
+            "source": "instapaper.py",
+            "destination": "{DEPLOY_ROOT}/lib/python/instapaper.py"
+        },
+        "env": {
+            "source": "instapaper.env",
+            "destination": "{DEPLOY_ROOT}/env/instapaper.env"
+        }
+    }
+}
