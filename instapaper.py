@@ -33,36 +33,30 @@
 # http://github.com/rsgalloway/instapaper
 # ---------------------------------------------------------------------------------------------
 
-import sys
-
-if sys.version_info > (3, 0):
-    import urllib.parse as urlparse
-    from urllib.parse import urlencode
-    from html.parser import HTMLParser
-else:
-    import urlparse
-    from urllib import urlencode
-    from HTMLParser import HTMLParser
-
-
-import json
-import oauth2 as oauth
-
-from re import sub
-from sys import stderr
-from traceback import print_exc
-
-__author__ = "Ryan Galloway <ryan@rsgalloway.com>"
-
 __doc__ = """
 An unofficial Python wrapper to the full Instapaper API.
 
 http://www.instapaper.com/api/full
 """
+__author__ = "Ryan Galloway <ryan@rsgalloway.com>"
 
-__todo__ = """
-- refactor http requests to standalone function
-"""
+import sys
+
+if sys.version_info > (3, 0):
+    import urllib.parse as urlparse
+    from html.parser import HTMLParser
+    from urllib.parse import urlencode
+else:
+    import urlparse
+    from urllib import urlencode
+    from HTMLParser import HTMLParser
+
+import json
+from re import sub
+from sys import stderr
+from traceback import print_exc
+
+import oauth2 as oauth
 
 _BASE_ = "https://www.instapaper.com"
 _API_VERSION_ = "api/1.1"
