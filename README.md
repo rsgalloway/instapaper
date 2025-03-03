@@ -19,6 +19,32 @@ $ cd instapaper
 $ python setup.py install
 ```
 
+#### envstack
+
+Environment variables can be managed in the instapaper.env files using
+[envstack](https://github.com/rsgalloway/envstack):
+
+```shell
+$ pip install -U envstack
+$ envstack instapaper -- python
+>>> import instapaper
+>>> instapaper._API_VERSION_
+'api/1.2'
+```
+
+#### distman
+
+If installing from source you can use [distman](https://github.com/rsgalloway/distman)
+to install pyseq using the provided `dist.json` file:
+
+```bash
+$ distman [-d]
+```
+
+Using distman will deploy the targets defined in the `dist.json` file to the
+root folder defined by `$DEPLOY_ROOT`, which can either be added to the
+instapaper.env file or a default.env file.
+
 ## Basic Usage
 
 Logging in:
