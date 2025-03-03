@@ -40,6 +40,7 @@ http://www.instapaper.com/api/full
 """
 __author__ = "Ryan Galloway <ryan@rsgalloway.com>"
 
+import os
 import sys
 
 if sys.version_info > (3, 0):
@@ -59,7 +60,7 @@ from traceback import print_exc
 import oauth2 as oauth
 
 _BASE_ = "https://www.instapaper.com"
-_API_VERSION_ = "api/1.1"
+_API_VERSION_ = os.getenv("API_VERSION", "api/1.1")
 _ACCESS_TOKEN_ = "oauth/access_token"
 _ACCOUNT_ = "account/verify_credentials"
 _BOOKMARKS_LIST_ = "bookmarks/list"
