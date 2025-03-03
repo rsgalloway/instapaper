@@ -34,6 +34,7 @@
 # ---------------------------------------------------------------------------------------------
 
 import sys
+
 if sys.version_info > (3, 0):
     import urllib.parse as urlparse
     from urllib.parse import urlencode
@@ -83,7 +84,6 @@ _HIGHLIGHTS_ = "highlights"
 
 
 class _DeHTMLParser(HTMLParser):
-
     def __init__(self):
         HTMLParser.__init__(self)
         self.__text = []
@@ -91,21 +91,21 @@ class _DeHTMLParser(HTMLParser):
     def handle_data(self, data):
         text = data.strip()
         if len(text) > 0:
-            text = sub('[ \t\r\n]+', ' ', text)
-            self.__text.append(text + ' ')
+            text = sub("[ \t\r\n]+", " ", text)
+            self.__text.append(text + " ")
 
     def handle_starttag(self, tag, attrs):
-        if tag == 'p':
-            self.__text.append('\n\n')
-        elif tag == 'br':
-            self.__text.append('\n')
+        if tag == "p":
+            self.__text.append("\n\n")
+        elif tag == "br":
+            self.__text.append("\n")
 
     def handle_startendtag(self, tag, attrs):
-        if tag == 'br':
-            self.__text.append('\n\n')
+        if tag == "br":
+            self.__text.append("\n\n")
 
     def text(self):
-        return ''.join(self.__text).strip()
+        return "".join(self.__text).strip()
 
 
 def dehtml(text):
@@ -113,7 +113,7 @@ def dehtml(text):
         parser = _DeHTMLParser()
         if text:
             if sys.version_info < (3, 0):
-                text = text.decode('UTF-8')
+                text = text.decode("UTF-8")
 
         else:
             return None
@@ -126,7 +126,6 @@ def dehtml(text):
 
 
 class Bookmark(object):
-
     def __init__(self, parent, params):
         self.parent = parent
         self.__text = None
@@ -152,12 +151,12 @@ class Bookmark(object):
         'is_private_from_source': u''}
         """
         try:
-            self.starred = (self.starred == '1')  # convert to boolean
+            self.starred = self.starred == "1"  # convert to boolean
         except:
             self.starred = False
 
     def __str__(self):
-        return '{}\n{}\n{}'.format(
+        return "{}\n{}\n{}".format(
             self.bookmark_id,
             self.title,
             self.url,
@@ -168,12 +167,15 @@ class Bookmark(object):
         if self.__html is None:
             response, html = self.parent.http.request(
                 "/".join([_BASE_, _API_VERSION_, _BOOKMARKS_TEXT_]),
-                method='POST',
-                body=urlencode({
-                    'bookmark_id': self.bookmark_id,
-                }))
+                method="POST",
+                body=urlencode(
+                    {
+                        "bookmark_id": self.bookmark_id,
+                    }
+                ),
+            )
             if response.get("status") == "200":
-                self.__html = html.decode('utf-8')
+                self.__html = html.decode("utf-8")
         return self.__html
 
     @property
@@ -185,10 +187,13 @@ class Bookmark(object):
     def star(self):
         response, html = self.parent.http.request(
             "/".join([_BASE_, _API_VERSION_, _BOOKMARKS_STAR_]),
-            method='POST',
-            body=urlencode({
-                'bookmark_id': self.bookmark_id,
-            }))
+            method="POST",
+            body=urlencode(
+                {
+                    "bookmark_id": self.bookmark_id,
+                }
+            ),
+        )
         if response.get("status") == "200":
             self.starred = True
             return True
@@ -197,10 +202,13 @@ class Bookmark(object):
     def unstar(self):
         response, html = self.parent.http.request(
             "/".join([_BASE_, _API_VERSION_, _BOOKMARKS_UNSTAR_]),
-            method='POST',
-            body=urlencode({
-                'bookmark_id': self.bookmark_id,
-            }))
+            method="POST",
+            body=urlencode(
+                {
+                    "bookmark_id": self.bookmark_id,
+                }
+            ),
+        )
         if response.get("status") == "200":
             self.starred = False
             return True
@@ -209,10 +217,13 @@ class Bookmark(object):
     def archive(self):
         response, html = self.parent.http.request(
             "/".join([_BASE_, _API_VERSION_, _BOOKMARKS_ARCHIVE_]),
-            method='POST',
-            body=urlencode({
-                'bookmark_id': self.bookmark_id,
-            }))
+            method="POST",
+            body=urlencode(
+                {
+                    "bookmark_id": self.bookmark_id,
+                }
+            ),
+        )
         if response.get("status") == "200":
             self.starred = True
             return True
@@ -221,10 +232,13 @@ class Bookmark(object):
     def unarchive(self):
         response, html = self.parent.http.request(
             "/".join([_BASE_, _API_VERSION_, _BOOKMARKS_UNARCHIVE_]),
-            method='POST',
-            body=urlencode({
-                'bookmark_id': self.bookmark_id,
-            }))
+            method="POST",
+            body=urlencode(
+                {
+                    "bookmark_id": self.bookmark_id,
+                }
+            ),
+        )
         if response.get("status") == "200":
             self.starred = False
             return True
@@ -233,10 +247,13 @@ class Bookmark(object):
     def delete(self):
         response, html = self.parent.http.request(
             "/".join([_BASE_, _API_VERSION_, _BOOKMARKS_DELETE_]),
-            method='POST',
-            body=urlencode({
-                'bookmark_id': self.bookmark_id,
-            }))
+            method="POST",
+            body=urlencode(
+                {
+                    "bookmark_id": self.bookmark_id,
+                }
+            ),
+        )
         if response.get("status") == "200":
             return True
         return False
@@ -246,45 +263,46 @@ class Bookmark(object):
         encoded_values = {}
         try:
             if self.content:
-                encoded_values['content'] = self.content
+                encoded_values["content"] = self.content
         except:
             pass
 
         try:
             if self.is_private_from_source:
-                encoded_values['is_private_from_source'] = self.is_private_from_source
+                encoded_values["is_private_from_source"] = self.is_private_from_source
         except:
             pass
 
         try:
             if self.url:
-                encoded_values['url'] = self.url
+                encoded_values["url"] = self.url
         except:
             pass
 
         try:
             if self.title:
-                encoded_values['title'] = self.title
+                encoded_values["title"] = self.title
         except:
             pass
 
         try:
             if self.description:
-                encoded_values['description'] = self.description
+                encoded_values["description"] = self.description
         except:
             pass
 
         try:
             if folder_id:
-                encoded_values['folder_id'] = folder_id
+                encoded_values["folder_id"] = folder_id
         except:
             pass
 
         # send the http request
         response, html = self.parent.http.request(
             "/".join([_BASE_, _API_VERSION_, _BOOKMARKS_ADD_]),
-            method='POST',
-            body=urlencode(encoded_values))
+            method="POST",
+            body=urlencode(encoded_values),
+        )
         if response.get("status") == "200":
             self.__html = html
         return self.__html
@@ -292,48 +310,58 @@ class Bookmark(object):
     def move(self, folder_id):
         response, html = self.parent.http.request(
             "/".join([_BASE_, _API_VERSION_, _BOOKMARKS_MOVE_]),
-            method='POST',
-            body=urlencode({
-                'bookmark_id': self.bookmark_id,
-                'folder_id': folder_id
-            }))
+            method="POST",
+            body=urlencode({"bookmark_id": self.bookmark_id, "folder_id": folder_id}),
+        )
         if response.get("status") == "200":
             return True
         return False
 
     def get_highlights(self):
         response, data = self.parent.http.request(
-            "/".join([_BASE_, _API_VERSION_, 'bookmarks', str(self.bookmark_id), 'highlights']),
-            method='POST')
+            "/".join(
+                [
+                    _BASE_,
+                    _API_VERSION_,
+                    "bookmarks",
+                    str(self.bookmark_id),
+                    "highlights",
+                ]
+            ),
+            method="POST",
+        )
         if response.get("status") == "200":
             return data.decode()
         else:
             raise Exception(response)
-            
+
     def create_highlight(self, highlight_text, position=0):
         """
         highlight_text: Required. The text for the highlight
         position: Optional. The 0-indexed position of text in the content. Defaults to 0.
         """
         response, data = self.parent.http.request(
-            "/".join([_BASE_, _API_VERSION_, 'bookmarks', str(self.bookmark_id), 'highlight']),
-            method='POST',
-            body=urlencode({
-                'text': highlight_text,
-                'position': position
-            }))
+            "/".join(
+                [_BASE_, _API_VERSION_, "bookmarks", str(self.bookmark_id), "highlight"]
+            ),
+            method="POST",
+            body=urlencode({"text": highlight_text, "position": position}),
+        )
         if response.get("status") == "200":
             return data.decode()
         else:
             raise Exception(response)
-   
+
     def delete_highlight(self, highlight_id):
         """
         highlight_id: Required. ID of the highlight.
         """
         response, data = self.parent.http.request(
-            "/".join([_BASE_, _API_VERSION_, _HIGHLIGHTS_, str(highlight_id), 'delete']),
-            method='POST')
+            "/".join(
+                [_BASE_, _API_VERSION_, _HIGHLIGHTS_, str(highlight_id), "delete"]
+            ),
+            method="POST",
+        )
         if response.get("status") == "200":
             return True
         return False
@@ -348,10 +376,11 @@ class InstapaperAuthenticationException(InstapaperException):
 
 
 class Instapaper(object):
-
     def __init__(self, oauthkey, oauthsec):
         if not oauthkey or not oauthsec:
-            raise InstapaperAuthenticationException("No OAuth key or secret found. Please provide both.")
+            raise InstapaperAuthenticationException(
+                "No OAuth key or secret found. Please provide both."
+            )
         self.consumer = oauth.Consumer(oauthkey, oauthsec)
         self.client = oauth.Client(self.consumer)
         self.token = None
@@ -360,14 +389,21 @@ class Instapaper(object):
     def login(self, username, password):
         response, content = self.client.request(
             "/".join([_BASE_, _API_VERSION_, _ACCESS_TOKEN_]),
-            "POST", urlencode({
-                'x_auth_mode': 'client_auth',
-                'x_auth_username': username,
-                'x_auth_password': password}))
+            "POST",
+            urlencode(
+                {
+                    "x_auth_mode": "client_auth",
+                    "x_auth_username": username,
+                    "x_auth_password": password,
+                }
+            ),
+        )
         if response.status in (401, 403):
-            raise InstapaperAuthenticationException("User could not be authenticated. Please check that user and OAuth credentials are correct.")
-        _oauth = dict(urlparse.parse_qsl(content.decode('utf-8')))
-        self.login_with_token(_oauth['oauth_token'], _oauth['oauth_token_secret'])
+            raise InstapaperAuthenticationException(
+                "User could not be authenticated. Please check that user and OAuth credentials are correct."
+            )
+        _oauth = dict(urlparse.parse_qsl(content.decode("utf-8")))
+        self.login_with_token(_oauth["oauth_token"], _oauth["oauth_token_secret"])
 
     def login_with_token(self, oauth_token, oauth_token_secret):
         """
@@ -378,10 +414,9 @@ class Instapaper(object):
 
     def user(self):
         response, data = self.http.request(
-            "/".join([_BASE_, _API_VERSION_, _ACCOUNT_]),
-            method='POST',
-            body=None)
-        user = json.loads(data.decode('utf-8'))[0]
+            "/".join([_BASE_, _API_VERSION_, _ACCOUNT_]), method="POST", body=None
+        )
+        user = json.loads(data.decode("utf-8"))[0]
         if user.get("type") == "error":
             raise Exception(data.get("message"))
         return user
@@ -394,13 +429,11 @@ class Instapaper(object):
         """
         response, data = self.http.request(
             "/".join([_BASE_, _API_VERSION_, _BOOKMARKS_LIST_]),
-            method='POST',
-            body=urlencode({
-                'folder_id': folder,
-                'limit': limit,
-                'have': have}))
+            method="POST",
+            body=urlencode({"folder_id": folder, "limit": limit, "have": have}),
+        )
         bookmarks = []
-        items = json.loads(data.decode('utf-8'))
+        items = json.loads(data.decode("utf-8"))
         for key in items.keys():
             if key == "error":
                 raise Exception(items[key])
@@ -412,10 +445,11 @@ class Instapaper(object):
     def folders(self):
         response, data = self.http.request(
             "/".join([_BASE_, _API_VERSION_, _FOLDERS_LIST_]),
-            method='POST',
-            body=urlencode({}))
+            method="POST",
+            body=urlencode({}),
+        )
         folders = []
-        items = json.loads(data.decode('utf-8'))
+        items = json.loads(data.decode("utf-8"))
         for item in items:
             folders.append(item)
         return folders
@@ -426,9 +460,9 @@ class Instapaper(object):
         """
         response, data = self.http.request(
             "/".join([_BASE_, _API_VERSION_, _FOLDERS_ADD_]),
-            method='POST',
-            body=urlencode({
-                'title': title}))
+            method="POST",
+            body=urlencode({"title": title}),
+        )
         if response.get("status") == "200":
             return True
         raise Exception(response)
@@ -439,9 +473,9 @@ class Instapaper(object):
         """
         response, data = self.http.request(
             "/".join([_BASE_, _API_VERSION_, _FOLDERS_DELETE]),
-            method='POST',
-            body=urlencode({
-                'folder_id': folder_id}))
+            method="POST",
+            body=urlencode({"folder_id": folder_id}),
+        )
         if response.get("status") == "200":
             return True
         raise Exception(response)

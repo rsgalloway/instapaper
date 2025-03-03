@@ -15,13 +15,13 @@ import instapaper
 
 def credentials_from_netrc():
     secrets = netrc.netrc()
-    username, __, password = secrets.authenticators('instapaper.com')
+    username, __, password = secrets.authenticators("instapaper.com")
     return (username, password)
 
 
 def app_credentials_from_netrc():
     secrets = netrc.netrc()
-    app_key, __, app_secret = secrets.authenticators('api.instapaper.com')
+    app_key, __, app_secret = secrets.authenticators("api.instapaper.com")
     return (app_key, app_secret)
 
 
