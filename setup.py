@@ -1,6 +1,7 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 # ---------------------------------------------------------------------------------------------
-# Copyright (c) 2012-2016, Ryan Galloway (ryan@rsgalloway.com)
+# Copyright (c) 2013-2025, Ryan Galloway (ryan@rsgalloway.com)
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
@@ -30,7 +31,7 @@
 # ---------------------------------------------------------------------------------------------
 # docs and latest version available for download at
 # http://github.com/rsgalloway/instapaper
-# ---------------------------------------------------------------------------------------------
+# ---------
 
 from setuptools import setup
 
