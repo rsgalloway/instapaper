@@ -41,7 +41,7 @@ requirements = [
 
 setup(
     name="instapaper",
-    version="0.4",
+    version="0.5",
     description="Unofficial Instapaper Python API.",
     author="Ryan Galloway",
     author_email="ryan@rsgalloway.com",
